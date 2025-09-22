@@ -3,5 +3,5 @@ services:
     name: bot-discord
     env: python
     buildCommand: ""
-    startCommand: "main.py"
+    startCommand: "python main.py"
     plan: free
