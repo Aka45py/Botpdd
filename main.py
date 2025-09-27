@@ -23,6 +23,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
+Reglement_id = 1031818811265011712
 
 # Variables pour le cooldown global
 last_welcome_time = 0
@@ -70,7 +71,14 @@ async def send_group_message():
 
     if channel and isinstance(channel, discord.TextChannel):
         mentions = " ".join([member.mention for member in welcome_queue])
-        await channel.send(f"Bienvenue {mentions} sur le serveur ! 🎊")
+        await channel.send(f"""Bienvenue {mentions} sur le serveur discord du Challenge PDD
+        Tout d'abord pour pouvoir participer à notre Challenge :
+        Nous t'invitons à lire le réglement en entier ici <#{Reglement_id}> pour le reglement des courses ainsi que des records
+        De plus il faut que ton pseudo Discord soit identique à ton pseudo VR (avec un préfixe pour les équipes et un slash pour un hypothétique prénom)
+        Également tu trouveras une distinction avec les courses Hors catégorie qui sont des courses qui ne comptent pas pour le challenge mais classé tout de même par des membres et si tu veux en faire partir n'hésite pas à contacter Aka45
+        En ce qui concerne les courses directement les inscriptions se font par un formulaire diffusé généralement 5-6 jours avant le départ puis la veille du départ un fichier pour sélectionner ses options est diffusé
+        Si toute fois tu cherches une information n'hésites pas à regarder dans les messages épinglés ou bien a poser des questions nous ne mangeons que des rations de navigations mais pas de dopants à la sauce VR
+        Au plaisir de te voir sur les flots avec nous""")
         welcome_queue.clear()
         last_welcome_time = time.time()
     elif isinstance(channel, discord.ForumChannel):
