@@ -71,7 +71,7 @@ async def send_group_message():
 
     if channel and isinstance(channel, discord.TextChannel):
         mentions = " ".join([member.mention for member in welcome_queue])
-        await channel.send(f"""Bienvenue {mentions} sur le serveur discord du Challenge PDD ! <:Test:1421455604039417918>    
+        await channel.send(f"""Bienvenue {mentions} sur le serveur discord du Challenge PDD ! <:PDD:1352260252090765373>    
 Tout d'abord pour pouvoir participer à notre Challenge :
 Nous t'invitons à lire le **réglement** en entier ici <#{Reglement_id}> pour le reglement des courses ainsi que des records
 De plus il faut que ton pseudo Discord soit identique à ton pseudo VR (avec un préfixe pour les équipes et un slash pour un hypothétique prénom)
