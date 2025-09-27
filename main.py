@@ -71,9 +71,9 @@ async def send_group_message():
 
     if channel and isinstance(channel, discord.TextChannel):
         mentions = " ".join([member.mention for member in welcome_queue])
-        await channel.send(f"""Bienvenue {mentions} sur le serveur discord du Challenge PDD
+        await channel.send(f"""Bienvenue {mentions} sur le serveur discord du Challenge PDD ! :PDD: 
     Tout d'abord pour pouvoir participer à notre Challenge :
-    Nous t'invitons à lire le réglement en entier ici <#{Reglement_id}> pour le reglement des courses ainsi que des records
+    Nous t'invitons à lire le **réglement** en entier ici <#{Reglement_id}> pour le reglement des courses ainsi que des records
     De plus il faut que ton pseudo Discord soit identique à ton pseudo VR (avec un préfixe pour les équipes et un slash pour un hypothétique prénom)
     Également tu trouveras une distinction avec les courses Hors catégorie qui sont des courses qui ne comptent pas pour le challenge mais classé tout de même par des membres et si tu veux en faire partir n'hésite pas à contacter Aka45
     En ce qui concerne les courses directement les inscriptions se font par un formulaire diffusé généralement 5-6 jours avant le départ puis la veille du départ un fichier pour sélectionner ses options est diffusé
