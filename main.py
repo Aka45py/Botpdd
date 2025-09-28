@@ -1,4 +1,4 @@
-import os 
+nimport os 
 import time
 import discord
 from discord.ext import commands, tasks
@@ -71,7 +71,7 @@ async def send_group_message():
 
     if channel and isinstance(channel, discord.TextChannel):
         mentions = " ".join([member.mention for member in welcome_queue])
-        await channel.send(f"""Bienvenue sur le discord des Challenges PDD !
+        await channel.send(f"""Bienvenue {mentions} sur le discord des Challenges PDD !
 Pour participer à nos Challenges, quelques règles essentielles :
 Nous t'invitons à lire les **règlements** <#{Reglement_id}> (règlements distincts des courses et des records)
 Ton **pseudo Discord PDD doit être identique au nom de ton bateau** (nom de bateau – initiales Team / prénom ) 
