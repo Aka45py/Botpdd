@@ -77,7 +77,7 @@ Nous t'invitons à lire les **règlements** <#{Reglement_id}> (règlements disti
 Ton **pseudo Discord PDD doit être identique au nom de ton bateau** (nom de bateau – initiales Team / prénom ) 
 Pour chaque course, un **formulaire d’Inscription** sera diffusé 10 jours avant le départ et clos à H-24
 A H-23h jusqu’à l’heure du départ, un 2ème **formulaire Options** sera édité. Il sera clos au départ de la course. 
-Pour permettre les classements, un **Pavillon à hisser (Pays + Département)** à hisser sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+ 24)
+Pour permettre les classements, un **Pavillon à hisser (Pays + Département)** sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+ 24)
 Si toutefois tu cherches une information, n'hésite pas à regarder dans les messages épinglés de chaque salon ou bien à poser des questions. Nous ne mangeons que des rations de navigation mais pas de dopants à la sauce VR …
 Des courses OFF hors challenge PDD sont également proposées et classées pour le fun avec leurs salons dédiés.
 Au plaisir de te voir sur les flots avec nous""")
