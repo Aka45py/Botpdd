@@ -89,25 +89,25 @@ Au plaisir de te voir sur les flots avec nous""")
         print(f"Type de canal non supporté ou canal introuvable: {channel}")
 
 # --------- Commandes Discord ---------
-@bot.command()
-async def programme(ctx):
-    await ctx.send(f"""Voilà le programme de la prochaine course {ctx.author.mention} 
-**__Les inscriptions sont closes !__**
-Pavillon à prendre : **ARGENTINA/CATAMARNA PROVINCE**
-Fichier des options : https://framaforms.org/choix-des-options-challenge-pdd-2025-course-ndeg9-la-solitaire-du-figaro-etape-3-1758312895
-Date et heure de fermeture de déclaration et départ : 21/09 17h00
-Date et heure du 1er classement : 22/09 17h00
-Le pavillon est à prendre __avant__ le premier classement
-Classeurs de la Course : :frog: | Tamanart99 - PV / Françoise et :whale: | :blue_square: JulienRo64 :peacock: PV4""")
+#@bot.command()
+#async def programme(ctx):
+#    await ctx.send(f"""Voilà le programme de la prochaine course {ctx.author.mention} 
+#**__Les inscriptions sont closes !__**
+#Pavillon à prendre : **ARGENTINA/CATAMARNA PROVINCE**
+#Fichier des options : https://framaforms.org/choix-des-options-challenge-pdd-2025-course-ndeg9-la-solitaire-du-figaro-etape-3-1758312895
+#Date et heure de fermeture de déclaration et départ : 21/09 17h00
+#Date et heure du 1er classement : 22/09 17h00
+#Le pavillon est à prendre __avant__ le premier classement
+#Classeurs de la Course : :frog: | Tamanart99 - PV / Françoise et :whale: | :blue_square: JulienRo64 :peacock: PV4""")
 
-@bot.command()
-async def programmeHC(ctx):
-    await ctx.send(f"""Pour l'instant aucune course hors catégorie n'est prévue {ctx.author.mention}
-Si vous avez des idées n'hésitez pas à contacter le CO afin d'organiser une course et la classer""")
+#@bot.command()
+#async def programmeHC(ctx):
+#    await ctx.send(f"""Pour l'instant aucune course hors catégorie n'est prévue {ctx.author.mention}
+#Si vous avez des idées n'hésitez pas à contacter le CO afin d'organiser une course et la classer""")
 
-@bot.command()
-async def Challenge(ctx):
-    await ctx.send("""Le challenge PDD consiste en 12 manches étalées sur toute l'année, avec comme condition pour respecter une égalite des chances entre les participants que les options sont limitées à la prime de départ ou bien en monotype choisi par le CO. """)
+#@bot.command()
+#async def Challenge(ctx):
+#    await ctx.send("""Le challenge PDD consiste en 12 manches étalées sur toute l'année, avec comme condition pour respecter une égalite des chances entre les participants que les options sont limitées à la prime de départ ou bien en monotype choisi par le CO. """)
 
 # --------- Lancement du bot ---------
 token = os.environ['TOKEN_TEST']  # mets ton token dans une variable d’environnement
