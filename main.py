@@ -71,7 +71,7 @@ async def send_group_message():
 
     if channel and isinstance(channel, discord.TextChannel):
         mentions = " ".join([member.mention for member in welcome_queue])
-        await channel.send(f"""Bienvenue sur le discord des Challenges PDD !
+        await channel.send(f'''Bienvenue sur le discord des Challenges PDD !
 Pour participer à nos Challenges, quelques règles essentielles :
 Nous t'invitons à lire les **règlements** : {<#Reglement_id>} (règlements distincts des courses et des records) 
 Ton **pseudo Discord PDD doit être identique au nom de ton bateau** (nom de bateau – initiales Team / prénom ) 
@@ -80,7 +80,7 @@ A H-24h jusqu’à l’heure départ, un 2ème **formulaire Options** sera édit
 Pour permettre les classements, un **Pavillon (Pays + Département)** à hisser sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+ 24)
 Si toutefois tu cherches une information, n'hésite pas à regarder dans les messages épinglés de chaque salon ou bien à poser des questions. Nous ne mangeons que des rations de navigation mais pas de dopants à la sauce VR …
 Des courses OFF hors challenge PDD sont également proposées et classées pour le fun avec leurs salons dédiés.
-Au plaisir de te voir sur les flots avec nous""")
+Au plaisir de te voir sur les flots avec nous''')
         welcome_queue.clear()
         last_welcome_time = time.time()
     elif isinstance(channel, discord.ForumChannel):
