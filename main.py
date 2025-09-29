@@ -41,10 +41,10 @@ async def on_member_join(member):
     now = time.time()
 
     # Message privé (toujours envoyé)
-    try:
-        await member.send(f"Bienvenue sur le serveur, {member.name} ! 🎉")
-    except:
-        print("Impossible d’envoyer un DM à ce membre.")
+    #try:
+    #   await member.send(f"Bienvenue sur le serveur, {member.name} ! 🎉")
+    #except:
+    #    print("Impossible d’envoyer un DM à ce membre.")
 
     # Ajoute le membre à la file d’attente (sans doublons)
     if member not in welcome_queue:
