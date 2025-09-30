@@ -110,5 +110,5 @@ Au plaisir de te voir sur les flots avec nous""")
 #    await ctx.send("""Le challenge PDD consiste en 12 manches étalées sur toute l'année, avec comme condition pour respecter une égalite des chances entre les participants que les options sont limitées à la prime de départ ou bien en monotype choisi par le CO. """)
 
 # --------- Lancement du bot ---------
-token = os.environ['TOKEN_TEST']  # mets ton token dans une variable d’environnement
+token = os.environ['TOKEN_BOT']  # mets ton token dans une variable d’environnement
 bot.run(token)
