@@ -42,6 +42,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
+    print("logo")
     global last_welcome_time
     now = time.time()
 
