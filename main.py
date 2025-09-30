@@ -71,7 +71,7 @@ async def send_welcome_messages():
 # Fonction pour envoyer un message groupé
 async def send_group_message():
     global last_welcome_time
-    channel_id = 740604309552758785  # <-- ID du salon de bienvenue
+    channel_id = 1004871766201614416  # <-- ID du salon de bienvenue
     channel = bot.get_channel(channel_id)
 
     if channel and isinstance(channel, discord.TextChannel):
