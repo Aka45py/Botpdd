@@ -36,6 +36,11 @@ async def on_ready():
     send_welcome_messages.start()  # démarrage de la tâche en arrière-plan
 
 @bot.event
+async def on_ready():
+    await bot.user.edit(username="Bot PDD")  # Change le nom global (attention : limité à 2 changements/heure)
+    print(f"Bot connecté en tant que {bot.user}")
+
+@bot.event
 async def on_member_join(member):
     global last_welcome_time
     now = time.time()
