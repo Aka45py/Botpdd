@@ -1,11 +1,14 @@
-import os 
+import os
 import time
+import threading
 import discord
 from discord.ext import commands, tasks
 from flask import Flask
-import threading
+import aiohttp
 
-# --------- Partie Flask pour keep-alive ---------
+# -------------------------------
+# 🚀 Partie Flask (Keep-alive)
+# -------------------------------
 app = Flask(__name__)
 
 @app.route('/')
@@ -15,52 +18,52 @@ def home():
 def run_flask():
     app.run(host="0.0.0.0", port=8080)
 
-# Lancement du serveur Flask dans un thread séparé
-threading.Thread(target=run_flask).start()
-
-# --------- Partie Discord Bot ---------
+# -------------------------------
+# ⚙️ Partie Discord
+# -------------------------------
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
-Reglement_id = 1031818811265011712
 
-# Variables pour le cooldown global
+# Variables globales
+Reglement_id = 1031818811265011712
 last_welcome_time = 0
 WELCOME_COOLDOWN = 15  # secondes
-welcome_queue = []  # file d’attente pour les nouveaux arrivants
+welcome_queue = []
 
+# -------------------------------
+# 📜 Événements
+# -------------------------------
 @bot.event
 async def on_ready():
-    print(f"Bot connecté en tant que {bot.user}")
-    send_welcome_messages.start()  # démarrage de la tâche en arrière-plan
-
-@bot.event
-async def on_ready():
-    await bot.user.edit(username="Bot PDD")  # Change le nom global (attention : limité à 2 changements/heure)
-    print(f"Bot connecté en tant que {bot.user}")
+    try:
+        await bot.user.edit(username="Bot PDD")  # max 2 changements par heure
+    except Exception as e:
+        print(f"[LOG] Impossible de changer le nom du bot : {e}")
+    print(f"[LOG] Bot connecté en tant que {bot.user}")
+    send_welcome_messages.start()
+    keep_alive.start()
 
 @bot.event
 async def on_member_join(member):
-    print("logo")
     global last_welcome_time
     now = time.time()
 
-    # Message privé (toujours envoyé)
-    #try:
-    #   await member.send(f"Bienvenue sur le serveur, {member.name} ! 🎉")
-    #except:
-    #    print("Impossible d’envoyer un DM à ce membre.")
+    print(f"[LOG] Nouveau membre détecté : {member.name}#{member.discriminator} (ID: {member.id})")
 
     # Ajoute le membre à la file d’attente (sans doublons)
     if member not in welcome_queue:
         welcome_queue.append(member)
+        print(f"[LOG] {member.name} ajouté à la file d’attente ({len(welcome_queue)} en attente)")
 
-    # Si le cooldown est écoulé, on envoie immédiatement
+    # Si le cooldown est écoulé, envoie tout de suite
     if now - last_welcome_time >= WELCOME_COOLDOWN:
         await send_group_message()
 
-# Tâche en arrière-plan pour vider la file d’attente
+# -------------------------------
+# 🔁 Tâches récurrentes
+# -------------------------------
 @tasks.loop(seconds=5)
 async def send_welcome_messages():
     global last_welcome_time
@@ -69,7 +72,6 @@ async def send_welcome_messages():
     if welcome_queue and now - last_welcome_time >= WELCOME_COOLDOWN:
         await send_group_message()
 
-# Fonction pour envoyer un message groupé
 async def send_group_message():
     global last_welcome_time
     channel_id = 1004871766201614416  # <-- ID du salon de bienvenue
@@ -80,40 +82,43 @@ async def send_group_message():
         await channel.send(f"""Bienvenue {mentions} sur le discord des Challenges PDD !
 Pour participer à nos Challenges, quelques règles essentielles :
 Nous t'invitons à lire les **règlements** <#{Reglement_id}> (règlements distincts des courses et des records)
-Ton **pseudo Discord PDD doit être identique au nom de ton bateau** ⛵️ (nom de bateau – initiales Team / prénom ) 
+Ton **pseudo Discord PDD doit être identique au nom de ton bateau** ⛵️ (nom de bateau – initiales Team / prénom)
 Pour chaque course, un **formulaire d’Inscription** 📃 sera diffusé 10 jours avant le départ et clos à H-24
-A H-23h jusqu’à l’heure du départ, un 2ème **formulaire Options** 📃 sera édité. Il sera clos au départ de la course. 
-Pour permettre les classements, un **Pavillon à hisser (Pays + Département)** 🏳️ sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+ 24)
+À H-23h jusqu’à l’heure du départ, un 2ème **formulaire Options** 📃 sera édité. Il sera clos au départ de la course.
+Pour permettre les classements, un **Pavillon à hisser (Pays + Département)** 🏳️ sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+24)
 Des courses OFF hors challenge PDD sont également proposées et classées pour le fun avec leurs salons dédiés.
-Au plaisir de te voir sur les flots avec nous""")
+Au plaisir de te voir sur les flots avec nous ! 🌊""")
+
+        print(f"[LOG] Message de bienvenue envoyé à {len(welcome_queue)} membres.")
         welcome_queue.clear()
         last_welcome_time = time.time()
-    elif isinstance(channel, discord.ForumChannel):
-        print(f"Le canal {channel.name} est un forum. Impossible d'envoyer un message de bienvenue directement.")
     else:
-        print(f"Type de canal non supporté ou canal introuvable: {channel}")
+        print(f"[LOG] Canal de bienvenue introuvable ou invalide : {channel}")
 
-# --------- Commandes Discord ---------
-#@bot.command()
-#async def programme(ctx):
-#    await ctx.send(f"""Voilà le programme de la prochaine course {ctx.author.mention} 
-#**__Les inscriptions sont closes !__**
-#Pavillon à prendre : **ARGENTINA/CATAMARNA PROVINCE**
-#Fichier des options : https://framaforms.org/choix-des-options-challenge-pdd-2025-course-ndeg9-la-solitaire-du-figaro-etape-3-1758312895
-#Date et heure de fermeture de déclaration et départ : 21/09 17h00
-#Date et heure du 1er classement : 22/09 17h00
-#Le pavillon est à prendre __avant__ le premier classement
-#Classeurs de la Course : :frog: | Tamanart99 - PV / Françoise et :whale: | :blue_square: JulienRo64 :peacock: PV4""")
+# -------------------------------
+# 🛠️ Keep-alive interne
+# -------------------------------
+@tasks.loop(minutes=5)
+async def keep_alive():
+    """Ping le site Render pour éviter l'inactivité."""
+    url = "https://botpdd.onrender.com"  # 🔧 Remplace par ton URL Render
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                print(f"[LOG] Keep-alive ping → {resp.status}")
+    except Exception as e:
+        print(f"[LOG] Erreur keep-alive : {e}")
 
-#@bot.command()
-#async def programmeHC(ctx):
-#    await ctx.send(f"""Pour l'instant aucune course hors catégorie n'est prévue {ctx.author.mention}
-#Si vous avez des idées n'hésitez pas à contacter le CO afin d'organiser une course et la classer""")
+# -------------------------------
+# 🚀 Lancement global
+# -------------------------------
+def run_discord():
+    token = os.environ["TOKEN_BOT"]
+    bot.run(token)
 
-#@bot.command()
-#async def Challenge(ctx):
-#    await ctx.send("""Le challenge PDD consiste en 12 manches étalées sur toute l'année, avec comme condition pour respecter une égalite des chances entre les participants que les options sont limitées à la prime de départ ou bien en monotype choisi par le CO. """)
+if __name__ == "__main__":
+    # Lancer Flask dans un thread séparé
+    threading.Thread(target=run_flask).start()
 
-# --------- Lancement du bot ---------
-token = os.environ['TOKEN_BOT']  # mets ton token dans une variable d’environnement
-bot.run(token)
+    # Lancer Discord dans le thread principal
+    run_discord()
