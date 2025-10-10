@@ -17,7 +17,9 @@ bot_ready = False  # indicateur de statut
 
 @app.route('/')
 def home():
-    return "<h2>✅ Le bot est en ligne et fonctionne parfaitement !</h2>", 200
+    # réponse simple & explicite pour éviter la page blanche
+    return ("<html><body><h2>✅ Le service Flask est en ligne</h2>"
+            f"<p>Statut bot Discord: {'connecté' if bot_ready else 'déconnecté'}</p></body></html>"), 200
 
 @app.route('/status')
 def status():
@@ -27,8 +29,11 @@ def status():
         return "❌ Bot Discord déconnecté", 503
 
 def run_flask():
-    print("[LOG] Démarrage du serveur Flask sur le port 8080 (use_reloader=False)")
-    app.run(host="0.0.0.0", port=8080, use_reloader=False)
+    # récupère le port fourni par Render (sinon fallback 8080)
+    port = int(os.environ.get("PORT", 8080))
+    print(f"[LOG] Démarrage du serveur Flask sur le port {port} (use_reloader=False)")
+    # use_reloader=False évite le double démarrage ; threaded=True sécurise les requêtes
+    app.run(host="0.0.0.0", port=port, use_reloader=False, threaded=True)
 
 # -------------------------------
 # ⚙️ Partie Discord
@@ -120,7 +125,8 @@ Au plaisir de te voir sur les flots avec nous""")
 # -------------------------------
 @tasks.loop(minutes=5)
 async def keep_alive():
-    url = "https://botpdd.onrender.com"  # 🔧 Remplace par ton URL Render si nécessaire
+    # pingons la route /status (meilleure indication si le bot est connecté)
+    url = "https://botpdd.onrender.com/status"  # 🔧 remplace si nécessaire
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
