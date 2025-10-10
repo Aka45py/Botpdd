@@ -17,7 +17,7 @@ bot_ready = False  # indicateur de statut
 
 @app.route('/')
 def home():
-    return "Le bot est en ligne ✅"
+    return "<h2>✅ Le bot est en ligne et fonctionne parfaitement !</h2>", 200
 
 @app.route('/status')
 def status():
