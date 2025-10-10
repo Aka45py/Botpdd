@@ -17,9 +17,9 @@ bot_ready = False  # indicateur de statut
 
 @app.route('/')
 def home():
-    # réponse simple & explicite pour éviter la page blanche
-    return ("<html><body><h2>✅ Le service Flask est en ligne</h2>"
-            f"<p>Statut bot Discord: {'connecté' if bot_ready else 'déconnecté'}</p></body></html>"), 200
+    return ("<h2>✅ Le bot PDD est en ligne</h2>"
+            f"<p>Statut Discord : {'🟢 Connecté' if bot_ready else '🔴 Déconnecté'}</p>"), 200
+
 
 @app.route('/status')
 def status():
@@ -28,12 +28,6 @@ def status():
     else:
         return "❌ Bot Discord déconnecté", 503
 
-def run_flask():
-    # récupère le port fourni par Render (sinon fallback 8080)
-    port = int(os.environ.get("PORT", 8080))
-    print(f"[LOG] Démarrage du serveur Flask sur le port {port} (use_reloader=False)")
-    # use_reloader=False évite le double démarrage ; threaded=True sécurise les requêtes
-    app.run(host="0.0.0.0", port=port, use_reloader=False, threaded=True)
 
 # -------------------------------
 # ⚙️ Partie Discord
@@ -48,32 +42,22 @@ last_welcome_time = 0
 WELCOME_COOLDOWN = 15
 welcome_queue = []
 
-# -------------------------------
-# 📜 Événements
-# -------------------------------
+
 @bot.event
 async def on_ready():
     global bot_ready
     bot_ready = True
-    try:
-        await bot.user.edit(username="Bot PDD")
-    except Exception as e:
-        print(f"[LOG] Nom du bot non modifié : {e}")
     print(f"[LOG] Bot connecté en tant que {bot.user}")
     send_welcome_messages.start()
     keep_alive.start()
+
 
 @bot.event
 async def on_disconnect():
     global bot_ready
     bot_ready = False
-    print("[LOG] Bot déconnecté de Discord 😢")
+    print("[LOG] Bot déconnecté 😢")
 
-@bot.event
-async def on_resumed():
-    global bot_ready
-    bot_ready = True
-    print("[LOG] Bot reconnecté à Discord 🎉")
 
 @bot.event
 async def on_member_join(member):
@@ -88,15 +72,14 @@ async def on_member_join(member):
     if now - last_welcome_time >= WELCOME_COOLDOWN:
         await send_group_message()
 
-# -------------------------------
-# 🔁 Tâches récurrentes
-# -------------------------------
+
 @tasks.loop(seconds=5)
 async def send_welcome_messages():
     global last_welcome_time
     now = time.time()
     if welcome_queue and now - last_welcome_time >= WELCOME_COOLDOWN:
         await send_group_message()
+
 
 async def send_group_message():
     global last_welcome_time
@@ -120,13 +103,10 @@ Au plaisir de te voir sur les flots avec nous""")
     else:
         print("[LOG] Canal de bienvenue introuvable ou invalide.")
 
-# -------------------------------
-# 🛠️ Keep-alive interne
-# -------------------------------
+
 @tasks.loop(minutes=5)
 async def keep_alive():
-    # pingons la route /status (meilleure indication si le bot est connecté)
-    url = "https://botpdd.onrender.com/status"  # 🔧 remplace si nécessaire
+    url = "https://botpdd.onrender.com/status"
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
@@ -134,37 +114,27 @@ async def keep_alive():
     except Exception as e:
         print(f"[LOG] Erreur keep-alive : {e}")
 
-# -------------------------------
-# 🔁 Redémarrage automatique si crash Discord
-# -------------------------------
-async def restart_bot():
-    """Relance le bot si la connexion Discord est perdue plus de 60 sec."""
-    global bot_ready
-    while True:
-        if not bot_ready:
-            print("[LOG] Bot inactif depuis 60 sec → redémarrage du process.")
-            os.execv(sys.executable, ['python'] + sys.argv)
-        await asyncio.sleep(60)
 
 # -------------------------------
-# 🚀 Lancement global
+# 🧠 Démarrage du bot Discord
 # -------------------------------
-def run_discord():
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    loop.create_task(restart_bot())
+def start_discord_bot():
+    asyncio.set_event_loop(asyncio.new_event_loop())
     token = os.environ.get("TOKEN_BOT")
     if not token:
         print("[ERREUR] TOKEN_BOT manquant dans Render Environment")
         sys.exit(1)
-    try:
-        loop.run_until_complete(bot.start(token))
-    except Exception as e:
-        print(f"[LOG] Erreur critique : {e}")
-        os.execv(sys.executable, ['python'] + sys.argv)
+    bot.run(token)
 
+
+# -------------------------------
+# 🚀 Lancement Flask (Render)
+# -------------------------------
 if __name__ == "__main__":
-    flask_thread = threading.Thread(target=run_flask, daemon=True)
-    flask_thread.start()
-    run_discord()
+    # Démarrer le bot Discord dans un thread séparé
+    threading.Thread(target=start_discord_bot, daemon=True).start()
+
+    # Démarrer Flask sur le port assigné par Render (thread principal)
+    port = int(os.environ.get("PORT", 10000))
+    print(f"[LOG] Lancement Flask sur le port {port}")
+    app.run(host="0.0.0.0", port=port, use_reloader=False)
