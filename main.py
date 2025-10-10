@@ -27,7 +27,8 @@ def status():
         return "❌ Bot Discord déconnecté", 503
 
 def run_flask():
-    app.run(host="0.0.0.0", port=8080)
+    print("[LOG] Démarrage du serveur Flask sur le port 8080 (use_reloader=False)")
+    app.run(host="0.0.0.0", port=8080, use_reloader=False)
 
 # -------------------------------
 # ⚙️ Partie Discord
@@ -102,12 +103,12 @@ async def send_group_message():
         await channel.send(f"""Bienvenue {mentions} sur le discord des Challenges PDD !
 Pour participer à nos Challenges, quelques règles essentielles :
 Nous t'invitons à lire les **règlements** <#{Reglement_id}> (règlements distincts des courses et des records)
-Ton **pseudo Discord PDD doit être identique au nom de ton bateau** ⛵️ (nom de bateau – initiales Team / prénom)
+Ton **pseudo Discord PDD doit être identique au nom de ton bateau** ⛵️ (nom de bateau – initiales Team / prénom ) 
 Pour chaque course, un **formulaire d’Inscription** 📃 sera diffusé 10 jours avant le départ et clos à H-24
-À H-23h jusqu’à l’heure du départ, un 2ème **formulaire Options** 📃 sera édité. Il sera clos au départ de la course.
-Pour permettre les classements, un **Pavillon à hisser (Pays + Département)** 🏳️ sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+24)
+A H-23h jusqu’à l’heure du départ, un 2ème **formulaire Options** 📃 sera édité. Il sera clos au départ de la course. 
+Pour permettre les classements, un **Pavillon à hisser (Pays + Département)** 🏳️ sera précisé en même temps. Le changement de pavillon sera clos au 1er classement (H+ 24)
 Des courses OFF hors challenge PDD sont également proposées et classées pour le fun avec leurs salons dédiés.
-Au plaisir de te voir sur les flots avec nous ! 🌊""")
+Au plaisir de te voir sur les flots avec nous""")
         welcome_queue.clear()
         last_welcome_time = time.time()
         print("[LOG] Message de bienvenue envoyé.")
@@ -119,7 +120,7 @@ Au plaisir de te voir sur les flots avec nous ! 🌊""")
 # -------------------------------
 @tasks.loop(minutes=5)
 async def keep_alive():
-    url = "https://botpdd.onrender.com"  # 🔧 Remplace par ton URL Render
+    url = "https://botpdd.onrender.com"  # 🔧 Remplace par ton URL Render si nécessaire
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as resp:
@@ -136,7 +137,7 @@ async def restart_bot():
     while True:
         if not bot_ready:
             print("[LOG] Bot inactif depuis 60 sec → redémarrage du process.")
-            os.execv(sys.executable, ['python'] + sys.argv)  # relance total
+            os.execv(sys.executable, ['python'] + sys.argv)
         await asyncio.sleep(60)
 
 # -------------------------------
@@ -146,9 +147,11 @@ def run_discord():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    # Lancer le bot + la surveillance
     loop.create_task(restart_bot())
-    token = os.environ["TOKEN_BOT"]
+    token = os.environ.get("TOKEN_BOT")
+    if not token:
+        print("[ERREUR] TOKEN_BOT manquant dans Render Environment")
+        sys.exit(1)
     try:
         loop.run_until_complete(bot.start(token))
     except Exception as e:
@@ -156,8 +159,6 @@ def run_discord():
         os.execv(sys.executable, ['python'] + sys.argv)
 
 if __name__ == "__main__":
-    # Lancer Flask dans un thread séparé
-    threading.Thread(target=run_flask).start()
-
-    # Lancer Discord dans le thread principal
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
     run_discord()
