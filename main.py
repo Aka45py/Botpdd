@@ -77,9 +77,6 @@ async def on_member_join(member):
         welcome_queue.append(member)
         print(f"[LOG] Ajouté à la file d’attente ({len(welcome_queue)} membres).")
 
-    if now - last_welcome_time >= WELCOME_COOLDOWN:
-        await send_group_message()
-
 # -------------------------------
 # 🔁 Tâches récurrentes
 # -------------------------------
