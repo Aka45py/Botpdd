@@ -49,7 +49,7 @@ async def on_ready():
     print(f"[LOG] Bot connecté en tant que {bot.user}")
 
     try:
-        await bot.user.edit(username="Bot PDD")
+        
     except Exception as e:
         print(f"[LOG] Nom du bot non modifié : {e}")
 
