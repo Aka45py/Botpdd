@@ -48,11 +48,6 @@ welcome_lock = False
 async def on_ready():
     print(f"[LOG] Bot connecté en tant que {bot.user}")
 
-    try:
-        
-    except Exception as e:
-        print(f"[LOG] Nom du bot non modifié : {e}")
-
     if not send_welcome_messages.is_running():
         send_welcome_messages.start()
 
